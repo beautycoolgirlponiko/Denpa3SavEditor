@@ -908,7 +908,7 @@ namespace Denpa3SavEditor
 
             window.Title = "装備を編集";
             window.Width = 250;
-            window.Height = 330;
+            window.Height = 360;
             window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             window.Owner = this;
 
@@ -917,6 +917,14 @@ namespace Denpa3SavEditor
             Panel.VerticalAlignment = VerticalAlignment.Center;
 
             Panel.Orientation = Orientation.Vertical;// 縦
+
+            TextBlock text = new TextBlock();
+            text.Text = "※ 持っていない装備を設定すると,\n  外す時に消えちゃうので、そこだけ注意です..";
+            text.Foreground = Brushes.Red;
+            text.FontSize = 11;
+            text.Margin = new Thickness(10, 30, 10, 10);
+
+            Panel.Children.Add(text);
 
             DenpaMen d = view[currentViewMode][currentDenpamenIndex];
 

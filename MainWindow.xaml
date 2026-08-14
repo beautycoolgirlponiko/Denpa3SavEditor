@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Denpa3SavEditor"
         Icon="/Assets/icon.ico"
         mc:Ignorable="d"
-        Title="電波人間のRPG3　電波人間クリエイター" Height="500" Width="800">
+        Title="電波人間のRPG3　電波人間クリエイター" Height="510" Width="810">
 
     <!-- ボタンとかスタイル -->
     <Window.Resources>
