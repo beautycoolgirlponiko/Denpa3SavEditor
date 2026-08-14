@@ -14,22 +14,4 @@
     <EmbeddedResource Include="Assets\antena\**\*.png" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Assets\wave.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Remove="Assets\soubiData.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Assets\soubiData.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <Resource Update="Assets\wave.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-
-
 </Project>

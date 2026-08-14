@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using System.Text.Json;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -65,7 +66,21 @@ namespace Denpa3SavEditor
 
         public void Init()
         {
-            string jsonText = File.ReadAllText("Assets/soubiData.json");
+            var uri = new Uri(
+                   "pack://application:,,,/Assets/soubiData.json",
+                   UriKind.Absolute
+               );
+
+            var resource = Application.GetResourceStream(uri);
+
+            if (resource == null)
+            {
+                throw new Exception("soubiData.json がResourceとして見つかりません");
+            }
+
+            using StreamReader reader = new StreamReader(resource.Stream);
+
+            string jsonText = reader.ReadToEnd();
 
             JsonDocument json = JsonDocument.Parse(jsonText);
 
