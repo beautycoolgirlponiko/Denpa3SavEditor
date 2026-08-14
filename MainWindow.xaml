@@ -190,15 +190,17 @@
             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                 <TextBlock Text="なまえ：" Width="60" VerticalAlignment="Center"/>
                 <TextBox x:Name="NameTextBox" TextChanged="ParametorTextBox_Changed" Width="118" Height="22"/>
-                <TextBlock Text="性格：" Width="35" Margin="9" VerticalAlignment="Center"/>
-                <ComboBox x:Name="PersonalityComboBox" SelectedValuePath="Key" SelectionChanged="PersonalityComboBox_SelectionChanged" Width="73" Height="24"/>
+
+                <TextBlock Text="装備：" Width="34" Margin="9" VerticalAlignment="Center"/>
+                <Button Content="開く" Height="23" x:Name="Soubi" Width="77" Click="Soubi_Click" Style="{StaticResource ButtonStyle}"  />
+
                 <!--<TextBox x:Name="PersonalityTextBox" TextChanged="ParametorTextBox_Changed" Width="68" Height="22"/>-->
             </StackPanel>
 
             <!-- アンテナ -->
             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                 <TextBlock Text="アンテナ：" Width="60" VerticalAlignment="Center"/>
-                <ComboBox x:Name="AntenaComboBox" SelectedValuePath="Key" SelectionChanged="AntenaComboBox_SelectionChanged" Width="118">
+                <ComboBox x:Name="AntenaComboBox" SelectedValuePath="Key" SelectionChanged="AntenaComboBox_SelectionChanged" Width="118" Height="22">
 
 
                     <ComboBox.ItemTemplate>
@@ -221,6 +223,8 @@
 
                 </ComboBox>
 
+                <TextBlock Text="性格：" Width="35" Margin="9" VerticalAlignment="Center"/>
+                <ComboBox x:Name="PersonalityComboBox" SelectedValuePath="Key" SelectionChanged="PersonalityComboBox_SelectionChanged" Width="82" Height="23"/>
             </StackPanel>
 
             <Separator Margin="10" Height="22" Width="255"/>
@@ -301,14 +305,14 @@
             <Button Content="リセット" Height="23" x:Name="buttonParamReset" Width="102" Click="ParametorReset_Click" Style="{StaticResource ButtonStyle}"  RenderTransformOrigin="0.5,0.5" />
             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                 <Button x:Name="BinaryEdit" Content="バイナリ" Width="50" Height="23" Click="EditButton_Click" Style="{StaticResource ButtonStyle}" />
-             
+
                 <!-- デバッグ用 -->
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,5" Visibility="Hidden">
 
                     <TextBlock Text="debug 値：" Width="60" VerticalAlignment="Center"/>
                     <TextBox x:Name="DebugTextBox" TextChanged="DebugTextBox_Changed" Width="82" Height="22"/>
                 </StackPanel>
-                
+
             </StackPanel>
         </StackPanel>
 

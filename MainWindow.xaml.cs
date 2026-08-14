@@ -56,6 +56,8 @@ namespace Denpa3SavEditor
         // 初期化できたか
         private static bool readSaveDated = false;
 
+        // 装備クラス　いろいろやる
+        Soubi soubi = new Soubi();
 
         enum previewMode
         {
@@ -338,6 +340,8 @@ namespace Denpa3SavEditor
             BodyHeightSlider.Maximum = DenpaMen.kMaxDenpaMenBodyHeight;
             BodyHeightSlider.IsDirectionReversed = true;
 
+            // 装備初期化
+            soubi.Init();
         }
 
         // お金系のdataの読込
@@ -848,10 +852,121 @@ namespace Denpa3SavEditor
             return button;
         }
 
+        // 装備パネル
+        struct soubiPanel
+        {
+            SoubiType type;
+
+            ComboBox comboBox = new ComboBox();
+
+            public soubiPanel(Soubi soubi,List<int> list,SoubiType t)
+            {
+                type = t;
+
+                comboBox.ItemsSource = soubi.getSoubiList(type);
+                comboBox.DisplayMemberPath = "Name";
+
+                // 801～の
+                int index = list[(int)type];
+
+                // ジャンル別の0～にする
+                comboBox.SelectedIndex = soubi.GetSoubiGenreIndexFromId(type,index);
+            }
+
+            public StackPanel CreatePanel(string text)
+            {
+                StackPanel panel = new StackPanel();
+                panel.Orientation = Orientation.Horizontal;// 横
+                panel.Margin = new Thickness(10);
+
+                TextBlock textBlock = new TextBlock();
+                textBlock.Text = text;
+
+                panel.Children.Add(textBlock);
+                panel.Children.Add(comboBox);
+
+                return panel;
+            }
+
+            public void Write(Soubi soubi,List<int> list)
+            {
+                list[(int)type] = soubi.GetSoubiIdFromGenreIndex(type, comboBox.SelectedIndex);
+            }
+        }
+
+
+        // 装備編集画面出る
+        private void Soubi_Click(object sender, RoutedEventArgs e)
+        {
+            if (!readSaveDated) return;
+
+            //　現在の電波の開始アドレス
+            Int32 address = view[currentViewMode][currentDenpamenIndex].GetDenpaAddress();
+            int start = address;
+
+            Window window = new Window();
+
+            window.Title = "装備を編集";
+            window.Width = 250;
+            window.Height = 330;
+            window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            window.Owner = this;
+
+            StackPanel Panel = new StackPanel();
+            Panel.HorizontalAlignment = HorizontalAlignment.Center;
+            Panel.VerticalAlignment = VerticalAlignment.Center;
+
+            Panel.Orientation = Orientation.Vertical;// 縦
+
+            DenpaMen d = view[currentViewMode][currentDenpamenIndex];
+
+            List<int> list = new List<int>(d.getSoubiIds());
+
+            soubiPanel neck = new    soubiPanel(soubi,list,SoubiType.Neck);
+            soubiPanel arm = new     soubiPanel(soubi,list,SoubiType.Arm);
+            soubiPanel foot = new    soubiPanel(soubi,list,SoubiType.Foot);
+            soubiPanel back = new    soubiPanel(soubi,list,SoubiType.Back);
+            soubiPanel clothes = new soubiPanel(soubi,list,SoubiType.Clothes);
+            
+            Panel.Children.Add(clothes.CreatePanel("服　："));
+            Panel.Children.Add(neck.CreatePanel   ("首　："));
+            Panel.Children.Add(back.CreatePanel   ("背中："));
+            Panel.Children.Add(arm.CreatePanel    ("腕　："));
+            Panel.Children.Add(foot.CreatePanel   ("足　："));
+
+            Button okButton = new Button();
+            okButton.Content = "OK";
+            okButton.Height = 30;
+            okButton.Style = (Style)FindResource("ButtonStyle");
+            okButton.Margin = new Thickness(20);
+
+            okButton.Click += (s, args) =>
+            {
+
+                neck.Write(soubi,list);
+                arm.Write(soubi,list);
+                foot.Write(soubi,list);
+                back.Write(soubi,list);
+                clothes.Write(soubi,list);
+
+                d.setSoubiIds(list);
+
+                window.Close();
+            };
+
+            Panel.Children.Add(okButton);
+            window.Content = Panel;
+
+            window.ShowDialog();
+        }
+
         // へんしゅう画面出る
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
             if (!readSaveDated) return;
+
+            // 一旦内容をバイナリに書き込み
+            view[currentViewMode][currentDenpamenIndex].WriteAllDatas(saveData);
 
             Window window = new Window();
 

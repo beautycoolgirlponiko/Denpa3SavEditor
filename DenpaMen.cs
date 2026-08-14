@@ -23,6 +23,9 @@ namespace Denpa3SavEditor
         // 身長
         public static int kMaxDenpaMenBodyHeight = 29;
 
+        // 初回か
+        bool isBind = false;
+
         int bodyHeight = 0;
         int bindBodyHeight = 0;
 
@@ -49,6 +52,13 @@ namespace Denpa3SavEditor
         // 個体値？　０２ならアンテナ有りのAPになる
         int individualIndex = 0;
         int bindIndividualIndex = 0;
+
+        // 装備
+        List<int> soubiIndexs =
+     Enumerable.Repeat(0, Enum.GetValues<SoubiType>().Length).ToList();
+        List<int> bindSoubiIndexs =
+     Enumerable.Repeat(0, Enum.GetValues<SoubiType>().Length).ToList();
+
 
         // デバッグ用
         private const int kDebugCorsorIndex = 88; // デバッグで書き換えるreadとかでかいてるなんばんめ番号
@@ -143,6 +153,7 @@ namespace Denpa3SavEditor
         public void DataSet(MainWindow mainwindow, byte[] sav)
 
         {
+
             // 名前
             name = ReadString(denpaAddress, sav);
 
@@ -155,6 +166,13 @@ namespace Denpa3SavEditor
             // アンテナ
             antena.SetIndex(ReadValue(62 + denpaAddress, 1, sav));
             antenaGenreIndex = ReadValue(88 + denpaAddress, 1, sav);
+
+            // 装備
+            soubiIndexs[(int)SoubiType.Neck]    = ReadValue(112 + denpaAddress, 2, sav);
+            soubiIndexs[(int)SoubiType.Arm]     = ReadValue(114 + denpaAddress, 2, sav);
+            soubiIndexs[(int)SoubiType.Foot]    = ReadValue(116 + denpaAddress, 2, sav);
+            soubiIndexs[(int)SoubiType.Back]    = ReadValue(118 + denpaAddress, 2, sav);
+            soubiIndexs[(int)SoubiType.Clothes] = ReadValue(120 + denpaAddress, 2, sav);
 
             // 身長
             bodyHeight = ReadValue(72 + denpaAddress, 1, sav);
@@ -179,16 +197,22 @@ namespace Denpa3SavEditor
             hearColorIndex = ReadValue(76 + denpaAddress, 1, sav);
             forelock.SetHearColorIndex(hearColorIndex);
 
+            // 初回限定
+            if (!isBind)
+            {
+                // 開始パラメータの保存
+                bindName = name;
+                bindBodyHeight = bodyHeight;
+                bindcolorIndex = colorIndex;
+                bindHearColorIndex = hearColorIndex;
+                bindSkinColorIndex = skinColorIndex;
+                bindPersonalityIndex = personalityIndex;
+                bindIndividualIndex = individualIndex;
+                bindAntenaGenreIndex = antenaGenreIndex;
+                bindSoubiIndexs = soubiIndexs;
 
-            // 開始パラメータの保存
-            bindName = name;
-            bindBodyHeight = bodyHeight;
-            bindcolorIndex = colorIndex;
-            bindHearColorIndex =hearColorIndex;
-            bindSkinColorIndex =skinColorIndex;
-            bindPersonalityIndex = personalityIndex;
-            bindIndividualIndex = individualIndex;
-            bindAntenaGenreIndex = antenaGenreIndex;
+                isBind = true;
+            }
 
             debugIndex = ReadValue(kDebugCorsorIndex + denpaAddress, 1, sav);
 
@@ -346,11 +370,13 @@ namespace Denpa3SavEditor
             bodyHeight = bindBodyHeight;
 
             antenaGenreIndex = bindAntenaGenreIndex;
+            soubiIndexs = bindSoubiIndexs;
 
             setColorIndex(colorIndex);
             setSkinColorIndex(skinColorIndex);
             setHearColorIndex(hearColorIndex);
             antena.ResetIndex();
+
 
             ChangeProcess(mainwindow);
         }
@@ -385,6 +411,13 @@ namespace Denpa3SavEditor
                     WriteValue(89 + denpaAddress, 1, 1, sav);
                 }
             }
+
+            // 装備
+            WriteValue(112 + denpaAddress, soubiIndexs[(int)SoubiType.Neck], 2, sav);
+            WriteValue(114 + denpaAddress, soubiIndexs[(int)SoubiType.Arm], 2, sav);
+            WriteValue(116 + denpaAddress, soubiIndexs[(int)SoubiType.Foot], 2, sav);
+            WriteValue(118 + denpaAddress, soubiIndexs[(int)SoubiType.Back], 2, sav);
+            WriteValue(120 + denpaAddress, soubiIndexs[(int)SoubiType.Clothes], 2, sav);
 
             // 身長
             WriteValue(72 + denpaAddress, bodyHeight, 1, sav);
@@ -423,6 +456,16 @@ namespace Denpa3SavEditor
 
         public void setName(string n) { name = n; }
         public string getName() { return name; }
+
+        public List<int> getSoubiIds()
+        {
+            return soubiIndexs;
+        }
+        public void setSoubiIds(List<int> list)
+        {
+            soubiIndexs = list;
+        }
+
         public void setColorIndex(int i) { 
 
             colorIndex = i;
